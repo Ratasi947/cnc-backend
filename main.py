@@ -32,8 +32,22 @@ def save_drawing(data: Drawing):
         "content": data.content
     }).execute()
     return {"status": "ok", "data": result.data}
-# API lấy danh sách    
+# API lấy danh sách bảng (toàn bộ)  
 @app.get("/api/drawings")
 def get_drawings():
     result = supabase.table("drawings").select("*").execute()
     return {"status": "ok", "data": result.data}
+    
+#API lấy danh sách bảng theo ID
+@app.get("/api/drawings/{drawing_id}")
+def get_drawing(drawing_id: str):
+    result = supabase.table("drawings").select("*").eq("id", drawing_id).single().execute()
+    return {"status": "ok", "data": result.data}
+
+    
+#API xoá bảng ghi theo ID
+@app.delete("/api/drawings/{drawing_id}")
+def delete_drawing(drawing_id: str):
+    result = supabase.table("drawings").delete().eq("id", drawing_id).execute()
+    return {"status": "ok", "data": result.data}
+
