@@ -19,11 +19,16 @@ def hello():
 
 from supabase_client import supabase
 
+from pydantic import BaseModel
+
+class Drawing(BaseModel):
+    filename: str
+    content: str
+
 @app.post("/api/save_drawing")
-def save_drawing(filename: str, content: str):
-    data = {
-        "filename": filename,
-        "content": content
-    }
-    result = supabase.table("drawings").insert(data).execute()
+def save_drawing(data: Drawing):
+    result = supabase.table("drawings").insert({
+        "filename": data.filename,
+        "content": data.content
+    }).execute()
     return {"status": "ok", "data": result.data}
