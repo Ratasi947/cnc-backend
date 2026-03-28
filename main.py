@@ -28,6 +28,7 @@ class Drawing(BaseModel):
 @app.post("/api/save_drawing")
 def save_drawing(data: Drawing):
     result = supabase.table("drawings").insert({
+        "id": data.id,
         "filename": data.filename,
         "content": data.content
     }).execute()
