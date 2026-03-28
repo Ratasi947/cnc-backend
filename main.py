@@ -16,7 +16,7 @@ def home():
 @app.get("/api/hello")
 def hello():
     return {"message": "FastAPI đã chạy thành công!"}
-    
+
 from supabase_client import supabase
 
 @app.post("/api/save_drawing")
