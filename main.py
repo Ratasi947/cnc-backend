@@ -32,3 +32,8 @@ def save_drawing(data: Drawing):
         "content": data.content
     }).execute()
     return {"status": "ok", "data": result.data}
+# API lấy danh sách    
+@app.get("/api/drawings")
+def get_drawings():
+    result = supabase.table("drawings").select("*").execute()
+    return {"status": "ok", "data": result.data}
