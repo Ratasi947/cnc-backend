@@ -19,37 +19,96 @@ def home():
 def hello():
     return {"message": "FastAPI đã chạy thành công!"}
 
-# Model nhận JSON
+
+# ======================
+# MODEL
+# ======================
 class Drawing(BaseModel):
     id: str
     filename: str
     content: str
 
-# API lưu dữ liệu
+
+# ======================
+# SAVE DRAWING
+# ======================
 @app.post("/api/save_drawing")
 def save_drawing(data: Drawing):
-    result = supabase.table("drawings").insert({
-        "id": data.id,
-        "filename": data.filename,
-        "content": data.content
-    }).execute()
-    return {"status": "ok", "data": result.data}
-# API lấy danh sách bảng (toàn bộ)  
+    try:
+        print("👉 DATA RECEIVED:", data)
+
+        result = supabase.table("drawings").insert({
+            "id": data.id,
+            "filename": data.filename,
+            "content": data.content
+        }).execute()
+
+        print("✅ INSERT RESULT:", result)
+
+        return {"status": "ok", "data": result.data}
+
+    except Exception as e:
+        print("🔥 ERROR save_drawing:", str(e))
+        return {"status": "error", "message": str(e)}
+
+
+# ======================
+# GET ALL
+# ======================
 @app.get("/api/drawings")
 def get_drawings():
-    result = supabase.table("drawings").select("*").execute()
-    return {"status": "ok", "data": result.data}
-    
-#API lấy danh sách bảng theo ID
+    try:
+        result = supabase.table("drawings").select("*").execute()
+        print("✅ GET ALL:", result)
+        return {"status": "ok", "data": result.data}
+
+    except Exception as e:
+        print("🔥 ERROR get_drawings:", str(e))
+        return {"status": "error", "message": str(e)}
+
+
+# ======================
+# GET BY ID
+# ======================
 @app.get("/api/drawings/{drawing_id}")
 def get_drawing(drawing_id: str):
-    result = supabase.table("drawings").select("*").eq("id", drawing_id).single().execute()
-    return {"status": "ok", "data": result.data}
+    try:
+        result = (
+            supabase
+            .table("drawings")
+            .select("*")
+            .eq("id", drawing_id)
+            .single()
+            .execute()
+        )
 
-    
-#API xoá bảng ghi theo ID
+        print("✅ GET ONE:", result)
+
+        return {"status": "ok", "data": result.data}
+
+    except Exception as e:
+        print("🔥 ERROR get_drawing:", str(e))
+        return {"status": "error", "message": str(e)}
+
+
+# ======================
+# DELETE
+# ======================
 @app.delete("/api/drawings/{drawing_id}")
 def delete_drawing(drawing_id: str):
-    result = supabase.table("drawings").delete().eq("id", drawing_id).execute()
-    return {"status": "ok", "data": result.data}
+    try:
+        result = (
+            supabase
+            .table("drawings")
+            .delete()
+            .eq("id", drawing_id)
+            .execute()
+        )
 
+        print("✅ DELETE:", result)
+
+        return {"status": "ok", "data": result.data}
+
+    except Exception as e:
+        print("🔥 ERROR delete_drawing:", str(e))
+        return {"status": "error", "message": str(e)}
