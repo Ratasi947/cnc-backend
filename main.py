@@ -1,6 +1,8 @@
 from fastapi import FastAPI
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
+from pydantic import BaseModel
+from supabase_client import supabase
 
 app = FastAPI()
 
@@ -17,14 +19,12 @@ def home():
 def hello():
     return {"message": "FastAPI đã chạy thành công!"}
 
-from supabase_client import supabase
-
-from pydantic import BaseModel
-
+# Model nhận JSON
 class Drawing(BaseModel):
     filename: str
     content: str
 
+# API lưu dữ liệu
 @app.post("/api/save_drawing")
 def save_drawing(data: Drawing):
     result = supabase.table("drawings").insert({
