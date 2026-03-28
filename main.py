@@ -21,6 +21,7 @@ def hello():
 
 # Model nhận JSON
 class Drawing(BaseModel):
+    id: str
     filename: str
     content: str
 
