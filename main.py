@@ -16,3 +16,14 @@ def home():
 @app.get("/api/hello")
 def hello():
     return {"message": "FastAPI đã chạy thành công!"}
+    
+from supabase_client import supabase
+
+@app.post("/api/save_drawing")
+def save_drawing(filename: str, content: str):
+    data = {
+        "filename": filename,
+        "content": content
+    }
+    result = supabase.table("drawings").insert(data).execute()
+    return {"status": "ok", "data": result.data}
