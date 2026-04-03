@@ -35,20 +35,32 @@ class Drawing(BaseModel):
 @app.post("/api/save_drawing")
 def save_drawing(data: Drawing):
     try:
-        print("👉 DATA RECEIVED:", data)
+        # 1) Kiểm tra ID đã tồn tại chưa
+        existing = (
+            supabase
+            .table("drawings")
+            .select("id")
+            .eq("id", data.id)
+            .execute()
+        )
 
+        if existing.data:
+            # ID đã tồn tại → trả về thông báo
+            return {
+                "status": "exists",
+                "message": "ID này đã có, bạn muốn Update nó đúng không? Dữ liệu trước đó sẽ bị xóa và thay mới."
+            }
+
+        # 2) Nếu chưa tồn tại → insert mới
         result = supabase.table("drawings").insert({
             "id": data.id,
             "filename": data.filename,
             "content": data.content
         }).execute()
 
-        print("✅ INSERT RESULT:", result)
-
         return {"status": "ok", "data": result.data}
 
     except Exception as e:
-        print("🔥 ERROR save_drawing:", str(e))
         return {"status": "error", "message": str(e)}
 
 
