@@ -63,6 +63,49 @@ def save_drawing(data: Drawing):
     except Exception as e:
         return {"status": "error", "message": str(e)}
 
+# ======================
+# UPDATE
+# ======================
+@app.put("/api/drawings/{drawing_id}")
+def update_drawing(drawing_id: str, data: Drawing):
+    try:
+        # Kiểm tra ID có tồn tại không
+        existing = (
+            supabase
+            .table("drawings")
+            .select("id")
+            .eq("id", drawing_id)
+            .execute()
+        )
+
+        if not existing.data:
+            return {
+                "status": "not_found",
+                "message": "ID không tồn tại, không thể update."
+            }
+
+        # Update dữ liệu
+        result = (
+            supabase
+            .table("drawings")
+            .update({
+                "filename": data.filename,
+                "content": data.content
+            })
+            .eq("id", drawing_id)
+            .execute()
+        )
+
+        return {
+            "status": "ok",
+            "message": "Update thành công!",
+            "data": result.data
+        }
+
+    except Exception as e:
+        print("🔥 ERROR update_drawing:", str(e))
+        return {"status": "error", "message": str(e)}
+
 
 # ======================
 # GET ALL
