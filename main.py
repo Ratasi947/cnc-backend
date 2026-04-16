@@ -6,6 +6,14 @@ from supabase_client import supabase
 
 app = FastAPI()
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"], # Tạm thời cho phép tất cả. Sau này thực tế thì thay bằng link web của Sếp
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 # Serve thư mục web (chứa HTML)
 app.mount("/web", StaticFiles(directory="web"), name="web")
 
@@ -166,4 +174,25 @@ def delete_drawing(drawing_id: str):
 
     except Exception as e:
         print("🔥 ERROR delete_drawing:", str(e))
+        return {"status": "error", "message": str(e)}
+
+# ======================
+# API: LẤY DANH SÁCH SẢN PHẨM BÁN LẺ
+# ======================
+@app.get("/api/products")
+def get_products():
+    try:
+        # Tương lai: Sếp tạo bảng "products" trên Supabase và dùng dòng dưới:
+        # result = supabase.table("products").select("barcode, name, sell_price, category_id").execute()
+        # return {"status": "ok", "data": result.data}
+
+        # Hiện tại (Giả lập trả về từ Server để Sếp test thông mạch):
+        data_tu_server = [
+            { "barcode": '893111', "name": 'Gạo Thơm 5kg (TỪ SERVER)', "price": 120000, "category": 'THỰC PHẨM', "icon": '🌾' },
+            { "barcode": '893222', "name": 'Nếp Cái Hoa Vàng (TỪ SERVER)', "price": 45000, "category": 'THỰC PHẨM', "icon": '🍚' },
+            { "barcode": '893333', "name": 'Cam Sành (TỪ SERVER)', "price": 35000, "category": 'TRÁI CÂY', "icon": '🍊' },
+        ]
+        return {"status": "ok", "data": data_tu_server}
+
+    except Exception as e:
         return {"status": "error", "message": str(e)}
