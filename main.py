@@ -178,22 +178,19 @@ def delete_drawing(drawing_id: str):
         return {"status": "error", "message": str(e)}
 
 # ======================
-# API: LẤY DANH SÁCH SẢN PHẨM BÁN LẺ
+# API: LẤY DANH SÁCH SẢN PHẨM TỪ SUPABASE
 # ======================
 @app.get("/api/products")
 def get_products():
     try:
-        # Tương lai: Sếp tạo bảng "products" trên Supabase và dùng dòng dưới:
-        # result = supabase.table("products").select("barcode, name, sell_price, category_id").execute()
-        # return {"status": "ok", "data": result.data}
-
-        # Hiện tại (Giả lập trả về từ Server để Sếp test thông mạch):
-        data_tu_server = [
-            { "barcode": '893111', "name": 'Gạo Thơm 5kg (TỪ SERVER)', "price": 120000, "category": 'THỰC PHẨM', "icon": '🌾' },
-            { "barcode": '893222', "name": 'Nếp Cái Hoa Vàng (TỪ SERVER)', "price": 45000, "category": 'THỰC PHẨM', "icon": '🍚' },
-            { "barcode": '893333', "name": 'Cam Sành (TỪ SERVER)', "price": 35000, "category": 'TRÁI CÂY', "icon": '🍊' },
-        ]
-        return {"status": "ok", "data": data_tu_server}
+        # Lệnh gọi thẳng lên Supabase để lấy toàn bộ dữ liệu trong bảng products
+        result = supabase.table("products").select("*").execute()
+        
+        # In ra Terminal (màu mè chút cho dễ nhìn) để Sếp giám sát
+        print("✅ DỮ LIỆU TỪ SUPABASE:", result.data)
+        
+        return {"status": "ok", "data": result.data}
 
     except Exception as e:
+        print("🔥 LỖI LẤY DỮ LIỆU:", str(e))
         return {"status": "error", "message": str(e)}
